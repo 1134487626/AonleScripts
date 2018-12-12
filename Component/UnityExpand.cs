@@ -12,76 +12,79 @@ using System.IO;
 /// </summary>
 public static class UnityExpand
 {
-    public static T GetTextPrefs<T>() where T : class
-    {
-        T temp = default(T);
-        StreamReader reader = null;
-        try
-        {
-            string txtPath = SetPrefsTxtPath(typeof(T));
-            if (File.Exists(txtPath))
-            {
-                reader = new StreamReader(txtPath);
-                string t = reader.ReadToEnd();
-                DeBug.LogOrange($"获取文本流信息：{t}");
-                temp = JsonUtility.FromJson<T>(t);
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.StackTrace);
-        }
-        finally
-        {
-            if (reader != null) reader.Close();
-        }
-        return temp;
-    }
+    public readonly static Color alpha1 = new Color(1, 1, 1, 0);
+    public readonly static Color32 alpha32 = new Color32(255, 255, 255, 0);
 
-    public static void SetTextPrefs<T>(T t) where T : class
-    {
-        StreamWriter writer = null;
-        try
-        {
-            string txt = JsonUtility.ToJson(t);
-            if (!string.IsNullOrEmpty(txt))
-            {
-                string txtPath = SetPrefsTxtPath(typeof(T));
-                if (File.Exists(txtPath))
-                {
-                    writer = new StreamWriter(txtPath, false);
-                }
-                else
-                {
-                    writer = File.CreateText(txtPath);
-                }
-                writer.Write(txt);
-                DeBug.LogGreen("保存文本流成功：" + txt);
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("保存文本流失败：" + e.StackTrace);
-        }
-        finally
-        {
-            if (writer != null) writer.Close();
-        }
-    }
+//    public static T GetTextPrefs<T>() where T : class
+//    {
+//        T temp = default(T);
+//        StreamReader reader = null;
+//        try
+//        {
+//            string txtPath = SetPrefsTxtPath(typeof(T));
+//            if (File.Exists(txtPath))
+//            {
+//                reader = new StreamReader(txtPath);
+//                string t = reader.ReadToEnd();
+//                DeBug.LogOrange($"获取文本流信息：{t}");
+//                temp = JsonUtility.FromJson<T>(t);
+//            }
+//        }
+//        catch (Exception e)
+//        {
+//            Debug.LogError(e.StackTrace);
+//        }
+//        finally
+//        {
+//            if (reader != null) reader.Close();
+//        }
+//        return temp;
+//    }
 
-    private static string SetPrefsTxtPath(Type type)
-    {
-#if UNITY_EDITOR
-        string prefix = $"{nameof(UnityExpand)}/{type.Namespace}";
-        NetExpand.ExistsOfDirectory(prefix);
-        return $"{prefix}/{type.Name}.txt";
-#elif UNITY_ANDROID || UNITY_IPHONE
-        string t = type.FullName.Replace(".", "_");
-        DeBug.Log(t);
-        return $"{Application.persistentDataPath}/{t}.txt";
-#endif
+//    public static void SetTextPrefs<T>(T t) where T : class
+//    {
+//        StreamWriter writer = null;
+//        try
+//        {
+//            string txt = JsonUtility.ToJson(t);
+//            if (!string.IsNullOrEmpty(txt))
+//            {
+//                string txtPath = SetPrefsTxtPath(typeof(T));
+//                if (File.Exists(txtPath))
+//                {
+//                    writer = new StreamWriter(txtPath, false);
+//                }
+//                else
+//                {
+//                    writer = File.CreateText(txtPath);
+//                }
+//                writer.Write(txt);
+//                DeBug.LogGreen("保存文本流成功：" + txt);
+//            }
+//        }
+//        catch (Exception e)
+//        {
+//            Debug.LogError("保存文本流失败：" + e.StackTrace);
+//        }
+//        finally
+//        {
+//            if (writer != null) writer.Close();
+//        }
+//    }
 
-    }
+//    private static string SetPrefsTxtPath(Type type)
+//    {
+//#if UNITY_EDITOR
+//        string prefix = $"{nameof(UnityExpand)}/{type.Namespace}";
+//        NetExpand.ExistsOfDirectory(prefix);
+//        return $"{prefix}/{type.Name}.txt";
+//#elif UNITY_ANDROID || UNITY_IPHONE
+//        string t = type.FullName.Replace(".", "_");
+//        DeBug.Log(t);
+//        return $"{Application.persistentDataPath}/{t}.txt";
+//#endif
+
+//    }
 
 
     /// <summary>

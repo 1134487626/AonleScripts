@@ -2,6 +2,8 @@
 using System.IO;
 using System;
 using UnityEngine;
+using System.Text;
+using System.Security.Cryptography;
 
 /// <summary>
 /// C# 扩展静态类
@@ -16,12 +18,6 @@ public static class NetExpand
                 int temp = i % 2 == 0 ? i % 2 : i - 1 % 2;
             }
      */
-
-    public static string NumberNorm(string r_Hanzi)
-    {
-        string str = string.Empty;
-        return str;
-    }
 
     /// <summary>
     /// 
@@ -47,6 +43,7 @@ public static class NetExpand
                 case 55: str += "七"; break;
                 case 56: str += "八"; break;
                 case 57: str += "九"; break;
+                case 190: str += "点"; break;
                 default: str += item; break;
             }
         }
@@ -195,5 +192,49 @@ public static class NetExpand
         }
         if (!File.Exists(path)) File.CreateText(path);
     }
+
+
+    /// <summary>
+    /// 内容加密
+    /// </summary>
+    /// <param name="content">要加密内容</param>
+    /// <param name="strkey">key值</param>
+    /// <returns></returns>
+    public static string EncryptionContent(string content, string strkey)
+    {
+        byte[] keyArray = Encoding.UTF8.GetBytes(strkey);
+        RijndaelManaged rijndael = new RijndaelManaged
+        {
+            Key = keyArray,
+            Mode = CipherMode.ECB,
+            Padding = PaddingMode.PKCS7
+        };
+        ICryptoTransform crypto = rijndael.CreateEncryptor();
+        byte[] base64 = Encoding.UTF8.GetBytes(content);
+        byte[] results = crypto.TransformFinalBlock(base64, 0, base64.Length);
+        return Convert.ToBase64String(results, 0, results.Length);
+    }
+
+    /// <summary>
+    /// 内容解密
+    /// </summary>
+    /// <param name="content">被加密内容</param>
+    /// <param name="strKey">key值</param>
+    /// <returns></returns>
+    public static string DecipheringContent(string content, string strKey)
+    {
+        byte[] keyArray = Encoding.UTF8.GetBytes(strKey);
+        RijndaelManaged rijndael = new RijndaelManaged
+        {
+            Key = keyArray,
+            Mode = CipherMode.ECB,
+            Padding = PaddingMode.PKCS7
+        };
+        ICryptoTransform crypto = rijndael.CreateDecryptor();
+        byte[] base64 = Convert.FromBase64String(content);
+        byte[] results = crypto.TransformFinalBlock(base64, 0, base64.Length);
+        return Encoding.UTF8.GetString(results);
+    }
+
 }
 
